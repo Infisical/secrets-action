@@ -36,7 +36,7 @@ try {
   if (exportType === "env") {
     // Write the secrets to action ENV
     Object.entries(keyValueSecrets).forEach(([key, value]) => {
-      core.setSecret(value);
+      //   core.setSecret(value);
       core.exportVariable(key, value);
     });
     core.info("Injected secrets as environment variables");
