@@ -18,7 +18,7 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
     });
     return response.data.accessToken;
   } catch (err) {
-    console.error("Error:", error.message);
+    console.error("Error:", error);
     throw err;
   }
 };
