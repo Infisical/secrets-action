@@ -35,7 +35,7 @@ try {
   // export fetched secrets
   if (exportType === "env") {
     // Write the secrets to action ENV
-    keyValueSecrets.entries(([key, value]) => {
+    Object.entries(keyValueSecrets).forEach(([key, value]) => {
       core.setSecret(value);
       core.exportVariable(key, value);
     });
@@ -55,6 +55,5 @@ try {
     core.info(`.env file was saved successfully to ${fileOutputPath}`);
   }
 } catch (error) {
-  console.log("ERR IS", error);
   core.setFailed(error.message);
 }
