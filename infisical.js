@@ -30,6 +30,8 @@ export const getRawSecrets = async ({
   infisicalToken,
   projectSlug,
   secretPath,
+  shouldIncludeImports,
+  shouldRecurse,
 }) => {
   try {
     const response = await axios({
@@ -41,8 +43,8 @@ export const getRawSecrets = async ({
       params: {
         secretPath,
         environment: envSlug,
-        include_imports: true,
-        recursive: true,
+        include_imports: shouldIncludeImports,
+        recursive: shouldRecurse,
         workspaceSlug: projectSlug,
       },
     });

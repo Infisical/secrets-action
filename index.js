@@ -11,6 +11,8 @@ try {
   const secretPath = core.getInput("secret-path");
   const exportType = core.getInput("export-type");
   const fileOutputPath = core.getInput("file-output-path");
+  const shouldIncludeImports = core.getBooleanInput("should-include-imports");
+  const shouldRecurse = core.getBooleanInput("should-recurse");
 
   // get infisical token using UA credentials
   const infisicalToken = await UALogin({
@@ -26,6 +28,8 @@ try {
     infisicalToken,
     projectSlug,
     secretPath,
+    shouldIncludeImports,
+    shouldRecurse,
   });
 
   // export fetched secrets

@@ -30,6 +30,14 @@ inputs:
     description: "Source path"
     required: false
     default: "/"
+  should-include-imports:
+    description: "If set to `true`, it will include imported secrets"
+    required: false
+    default: true
+  should-recurse:
+    description: "If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories"
+    required: false
+    default: false
 runs:
   using: "node20"
   main: "index.js"
