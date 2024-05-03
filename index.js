@@ -32,7 +32,11 @@ try {
     shouldRecurse,
   });
 
-  core.info("Exporting the following envs", Object.keys(keyValueSecrets));
+  core.info(
+    `Exporting the following envs", ${JSON.stringify(
+      Object.keys(keyValueSecrets)
+    )}`
+  );
 
   // export fetched secrets
   if (exportType === "env") {
