@@ -14,6 +14,7 @@ try {
 
   // get infisical token using UA credentials
   const infisicalToken = await UALogin({
+    domain,
     clientId: UAClientId,
     clientSecret: UAClientSecret,
   });
