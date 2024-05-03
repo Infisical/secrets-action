@@ -14,6 +14,7 @@ try {
 
   // get infisical token using UA credentials
   const infisicalToken = await UALogin({
+    domain,
     clientId: UAClientId,
     clientSecret: UAClientSecret,
   });
@@ -30,7 +31,7 @@ try {
   // export fetched secrets
   if (exportType === "env") {
     // Write the secrets to action ENV
-    keyValueSecrets.entries(([key, value]) => {
+    Object.entries(keyValueSecrets).forEach(([key, value]) => {
       core.setSecret(value);
       core.exportVariable(key, value);
     });
@@ -38,16 +39,17 @@ try {
   } else if (exportType === "file") {
     // Write the secrets to a .env file at the specified path
     const envContent = Object.keys(keyValueSecrets)
-      .map((key) => `${key}=${obj[key]}`)
+      .map((key) => `${key}='${keyValueSecrets[key]}'`)
       .join("\n");
 
     try {
-      await fs.writeFile(fileOutputPath, envContent);
+      core.info(`Exporting secrets as .env file to path ${fileOutputPath}`);
+      await fs.writeFile(`${fileOutputPath}.env`, envContent);
     } catch (err) {
-      core.error(`Error writing .env file: ${err}`);
+      core.error(`Error writing .env file: ${err.message}`);
       throw err;
     }
-    core.info(`.env file was saved successfully to ${fileOutputPath}`);
+    core.info("Successfully exported secrets to .env file");
   }
 } catch (error) {
   core.setFailed(error.message);

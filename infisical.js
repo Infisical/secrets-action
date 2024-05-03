@@ -1,4 +1,5 @@
 import axios from "axios";
+import core from "@actions/core";
 import querystring from "querystring";
 
 export const UALogin = async ({ clientId, clientSecret, domain }) => {
@@ -18,7 +19,7 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
     });
     return response.data.accessToken;
   } catch (err) {
-    console.error("Error:", error.message);
+    core.error("Error:", err.message);
     throw err;
   }
 };
@@ -67,7 +68,7 @@ export const getRawSecrets = async ({
 
     return keyValueSecrets;
   } catch (err) {
-    console.error("Error:", error.message);
+    core.error("Error:", err.message);
     throw err;
   }
 };
