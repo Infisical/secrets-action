@@ -32,6 +32,8 @@ try {
     shouldRecurse,
   });
 
+  core.info("Exporting the following envs", Object.keys(keyValueSecrets));
+
   // export fetched secrets
   if (exportType === "env") {
     // Write the secrets to action ENV
@@ -47,8 +49,9 @@ try {
       .join("\n");
 
     try {
-      core.info(`Exporting secrets as .env file to path ${fileOutputPath}`);
-      await fs.writeFile(`${fileOutputPath}.env`, envContent);
+      const filePath = `${fileOutputPath}.env`;
+      core.info(`Exporting secrets to ${filePath}`);
+      await fs.writeFile(filePath, envContent);
     } catch (err) {
       core.error(`Error writing .env file: ${err.message}`);
       throw err;
