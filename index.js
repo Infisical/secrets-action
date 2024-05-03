@@ -4,6 +4,7 @@ import fs from "fs/promises";
 
 try {
   const UAClientId = core.getInput("client-id");
+  console.log("UA CLIENT ID IS", UAClientId);
   const UAClientSecret = core.getInput("client-secret");
   const domain = core.getInput("domain");
   const envSlug = core.getInput("env-slug");
