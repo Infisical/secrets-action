@@ -4,7 +4,6 @@ import fs from "fs/promises";
 
 try {
   const UAClientId = core.getInput("client-id");
-  console.log("UA CLIENT ID IS", UAClientId);
   const UAClientSecret = core.getInput("client-secret");
   const domain = core.getInput("domain");
   const envSlug = core.getInput("env-slug");
@@ -19,6 +18,8 @@ try {
     clientSecret: UAClientSecret,
   });
 
+  console.log("INFISICAL TOKEN", infisicalToken);
+
   // get secrets from Infisical using input params
   const keyValueSecrets = await getRawSecrets({
     domain,
@@ -27,6 +28,8 @@ try {
     projectSlug,
     secretPath,
   });
+
+  console.log("KEY VALUE SECRETS", keyValueSecrets);
 
   // export fetched secrets
   if (exportType === "env") {
