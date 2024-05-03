@@ -43,7 +43,7 @@ try {
   } else if (exportType === "file") {
     // Write the secrets to a .env file at the specified path
     const envContent = Object.keys(keyValueSecrets)
-      .map((key) => `${key}=${obj[key]}`)
+      .map((key) => `${key}=${keyValueSecrets[key]}`)
       .join("\n");
 
     try {
