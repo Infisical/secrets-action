@@ -43,17 +43,17 @@ try {
   } else if (exportType === "file") {
     // Write the secrets to a .env file at the specified path
     const envContent = Object.keys(keyValueSecrets)
-      .map((key) => `${key}=${keyValueSecrets[key]}`)
+      .map((key) => `${key}='${keyValueSecrets[key]}'`)
       .join("\n");
 
     try {
-      core.info(`Writing secrets to .env file in ${fileOutputPath}`);
+      core.info(`Exporting secrets as .env file to path ${fileOutputPath}`);
       await fs.writeFile(`${fileOutputPath}.env`, envContent);
     } catch (err) {
       core.error(`Error writing .env file: ${err}`);
       throw err;
     }
-    core.info(`.env file was saved successfully to ${fileOutputPath}`);
+    core.info("Successfully exported to .env file");
   }
 } catch (error) {
   core.setFailed(error.message);
