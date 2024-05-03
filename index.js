@@ -47,7 +47,8 @@ try {
       .join("\n");
 
     try {
-      await fs.writeFile(fileOutputPath, envContent);
+      core.info(`Writing secrets to .env file in ${fileOutputPath}`);
+      await fs.writeFile(`${fileOutputPath}.env`, envContent);
     } catch (err) {
       core.error(`Error writing .env file: ${err}`);
       throw err;
