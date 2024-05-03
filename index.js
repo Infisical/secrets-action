@@ -54,5 +54,6 @@ try {
     core.info(`.env file was saved successfully to ${fileOutputPath}`);
   }
 } catch (error) {
+  console.log("ERR IS", error);
   core.setFailed(error.message);
 }
