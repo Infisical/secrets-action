@@ -3,16 +3,16 @@ author: "Infisical"
 desription: "Fetch secrets from Infisical"
 inputs:
   client-id:
-    description: "Universal auth client ID"
+    description: "Machine Identity client ID"
     required: true
   client-secret:
-    description: "Universal auth secret key"
+    description: "Machine Identity secret key"
     required: true
   project-slug:
-    description: "Source project"
+    description: "Source project slug"
     required: true
   env-slug:
-    description: "Source environment"
+    description: "Source environment slug"
     required: true
   domain:
     description: "Infisical URL (defaults to https://app.infisical.com )"
