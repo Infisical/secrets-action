@@ -32,7 +32,7 @@ try {
     shouldRecurse,
   });
 
-  core.info(
+  core.debug(
     `Exporting the following envs", ${JSON.stringify(
       Object.keys(keyValueSecrets)
     )}`
