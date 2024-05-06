@@ -8,13 +8,16 @@ inputs:
   client-secret:
     description: "Universal auth secret key"
     required: true
+  project-slug:
+    description: "Source project"
+    required: true
+  env-slug:
+    description: "Source environment"
+    required: true
   domain:
     description: "Infisical URL (defaults to https://app.infisical.com )"
     required: false
     default: "https://app.infisical.com"
-  env-slug:
-    description: "Source environment"
-    required: true
   export-type:
     description: "If set to `env`, it will set the fetched secrets as environment variables for subsequent steps of a workflow. If set to `file`, it will export the secrets in a .env file in the defined file-output-path"
     required: false
@@ -23,9 +26,6 @@ inputs:
     description: "The path to save the .env file when export-type is set to `file`"
     required: false
     default: "./"
-  project-slug:
-    description: "Source project"
-    required: true
   secret-path:
     description: "Source path"
     required: false
