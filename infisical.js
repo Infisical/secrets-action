@@ -46,6 +46,7 @@ export const getRawSecrets = async ({
         include_imports: shouldIncludeImports,
         recursive: shouldRecurse,
         workspaceSlug: projectSlug,
+        expandSecretReferences: true,
       },
     });
 
