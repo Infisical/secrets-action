@@ -53,7 +53,7 @@ try {
       .join("\n");
 
     try {
-      const filePath = `${fileOutputPath}.env`;
+      const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}.env`;
       core.info(`Exporting secrets to ${filePath}`);
       await fs.writeFile(filePath, envContent);
     } catch (err) {
