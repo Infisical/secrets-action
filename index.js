@@ -47,20 +47,20 @@ try {
     });
     core.info("Injected secrets as environment variables");
   } else if (exportType === "file") {
-    // Write the secrets to a .env file at the specified path
-    const envContent = Object.keys(keyValueSecrets)
+    // Write the secrets to a file at the specified path
+    const fileContent = Object.keys(keyValueSecrets)
       .map((key) => `${key}='${keyValueSecrets[key]}'`)
       .join("\n");
 
     try {
-      const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}.env`;
+      const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}`;
       core.info(`Exporting secrets to ${filePath}`);
-      await fs.writeFile(filePath, envContent);
+      await fs.writeFile(filePath, fileContent);
     } catch (err) {
-      core.error(`Error writing .env file: ${err.message}`);
+      core.error(`Error writing file: ${err.message}`);
       throw err;
     }
-    core.info("Successfully exported secrets to .env file");
+    core.info("Successfully exported secrets to file");
   }
 } catch (error) {
   core.setFailed(error.message);
