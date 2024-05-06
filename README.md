@@ -1,12 +1,12 @@
 # Infisical Secrets Loader Action
-This action will allow you to load secrets from Infisical(cloud/self-hosted) into your Github workflows
+This action will allow you to load secrets from Infisical (cloud/self-hosted) and use them in your Github workflows
 
 ## Configuration
 - In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/universal-auth) for your project.
 - Extract the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
   
 ## Usage
-You can use the secrets in two ways, as environment variables or as a file 
+With this action, you can use your Infisical secrets in two ways: as environment variables or as a file.
 
 ### As environment variables
 This will inject your Infisical secrets as environment variables of your workflow. Preceding steps of your Github job will be able to access the secret values by reading from the ENV.
@@ -14,23 +14,59 @@ This will inject your Infisical secrets as environment variables of your workflo
 ```yaml
       - uses: Infisical/secrets-loader-action@v1.0.0
         with:
-          client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }}
-          client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }}
+          client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }}  # Update this to your own Github references
+          client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }}  # Update this to your own Github references
           env-slug: "dev"
           project-slug: "example-project-r-i3x"
 ```
 
 ### As a file
+This will export your Infisical secrets to a file in your GITHUB_WORKSPACE. Currently, the output is in a `.env` file format (key=value pairs separated by `\n`)
 ```yaml
-      - uses: Infisical/secrets-loader-action@main
+      - uses: Infisical/secrets-loader-action@v1.0.0
         with:
-          client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }}
-          client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }}
+          client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }}  # Update this to your own Github references
+          client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }}  # Update this to your own Github references
           env-slug: "dev"
           project-slug: "example-project-r-i3x"
           export-type: "file"
-          file-output-path: "/src/" #defaults to "/"
+          file-output-path: "/src/.env"  # defaults to "/.env"
+```
+**Note**: Make sure to configure an `actions/checkout` step before using this action in file export mode
+```yaml
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 ```
 
 
 ## Inputs
+### `client-id`
+**Required**. Machine Identity client ID
+
+### `client-secret`
+**Required**. Machine Identity secret key
+
+### `project-slug`
+**Required**. Source project slug
+
+### `env-slug`
+**Required**. Source environment slug
+
+### `domain`
+**Optional**. Infisical URL. Defaults to https://app.infisical.com
+
+### `export-type`
+**Optional**. If set to `env`, it will set the fetched secrets as environment variables for subsequent steps of a workflow. If set to `file`, it will export the secrets in a .env file in the defined file-output-path. Defaults to `env`
+
+### `file-output-path`
+**Optional**. The path to save the file when export-type is set to `file`. Defaults to `/.env`
+
+### `secret-path`
+**Optional**. Source secret path. Defaults to `/`
+
+### `should-include-imports`
+**Optional**. If set to `true`, it will include imported secrets. Defaults to `true`
+
+### `should-recurse`
+**Optional**. If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories. Defaults to `false`
