@@ -6,7 +6,7 @@
   "type": "module",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Infisical/secrets-loader-action"
+    "url": "git+https://github.com/Infisical/secrets-action"
   },
   "keywords": [],
   "author": "Infisical",
