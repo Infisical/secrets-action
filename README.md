@@ -1,5 +1,5 @@
 # Infisical Secrets Loader Action
-This action will allow you to load secrets from Infisical (cloud/self-hosted) and use them in your Github workflows
+This GitHub Action enables you to import secrets from Infisical—whether hosted in the cloud or self-hosted—directly into your GitHub workflows.
 
 ## Configuration
 - In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/universal-auth) for your project.
@@ -9,7 +9,7 @@ This action will allow you to load secrets from Infisical (cloud/self-hosted) an
 With this action, you can use your Infisical secrets in two ways: as environment variables or as a file.
 
 ### As environment variables
-This will inject your Infisical secrets as environment variables of your workflow. Preceding steps of your Github job will be able to access the secret values by reading from the ENV.
+Secrets are injected as environment variables and can be referenced by subsequent workflow steps.
 
 ```yaml
       - uses: Infisical/secrets-loader-action@v1.0.0
@@ -21,7 +21,7 @@ This will inject your Infisical secrets as environment variables of your workflo
 ```
 
 ### As a file
-This will export your Infisical secrets to a file in your GITHUB_WORKSPACE. Currently, the output is in a `.env` file format (key=value pairs separated by `\n`)
+Exports secrets to a file in your `GITHUB_WORKSPACE`, useful for applications that read from `.env` files.
 ```yaml
       - uses: Infisical/secrets-loader-action@v1.0.0
         with:
