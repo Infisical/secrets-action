@@ -1,9 +1,12 @@
 {
-  "name": "infisical-secrets-loader-action",
-  "version": "0.1.0",
+  "name": "infisical-secrets-action",
+  "version": "1.0.4",
   "description": "Github action to load secrets from Infisical",
   "main": "index.js",
   "type": "module",
+  "bugs": {
+    "url": "https://github.com/Infisical/secrets-action/issues"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Infisical/secrets-action"

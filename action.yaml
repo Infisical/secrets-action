@@ -1,4 +1,4 @@
-name: Load Infisical Secrets
+name: Fetch Infisical Secrets
 author: "Infisical"
 desription: "Fetch secrets from Infisical"
 inputs:
