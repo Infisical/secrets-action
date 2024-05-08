@@ -50,12 +50,11 @@ export const getRawSecrets = async ({
       },
     });
 
-    const keyValueSecrets = response.data.secrets.reduce(
-      (accumulator, secret) => {
-        accumulator[secret.secretKey] = secret.secretValue;
-        return accumulator;
-      },
-      {}
+    const keyValueSecrets = Object.fromEntries(
+      response.data.secrets.map((secret) => [
+        secret.secretKey,
+        secret.secretValue,
+      ])
     );
 
     // process imported secrets
