@@ -1,6 +1,9 @@
 name: Fetch Infisical Secrets
 author: "Infisical"
 description: "Fetch secrets from Infisical into your Github workflows"
+branding:
+  icon: "lock"
+  color: "yellow"
 inputs:
   client-id:
     description: "Machine Identity client ID"
