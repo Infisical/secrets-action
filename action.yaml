@@ -1,6 +1,6 @@
 name: Fetch Infisical Secrets
 author: "Infisical"
-desription: "Fetch secrets from Infisical"
+description: "Fetch secrets from Infisical into your Github workflows"
 inputs:
   client-id:
     description: "Machine Identity client ID"
