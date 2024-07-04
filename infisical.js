@@ -24,6 +24,31 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
   }
 };
 
+export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
+  const idToken = await core.getIDToken(oidcAudience);
+
+  const loginData = querystring.stringify({
+    identityId,
+    jwt: idToken,
+  });
+
+  try {
+    const response = await axios({
+      method: "post",
+      url: `${domain}/api/v1/auth/oidc-auth/login`,
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      data: loginData,
+    });
+
+    return response.data.accessToken;
+  } catch (err) {
+    core.error("Error:", err.message);
+    throw err;
+  }
+};
+
 export const getRawSecrets = async ({
   domain,
   envSlug,

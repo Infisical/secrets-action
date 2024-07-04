@@ -5,12 +5,22 @@ branding:
   icon: "lock"
   color: "yellow"
 inputs:
+  method:
+    description: "The authentication method to use"
+    required: false
+    default: "universal"
   client-id:
     description: "Machine Identity client ID"
-    required: true
+    required: false
   client-secret:
     description: "Machine Identity secret key"
-    required: true
+    required: false
+  identity-id:
+    description: "Machine Identity ID"
+    required: false
+  oidc-audience:
+    description: "Custom aud claim for the signed Github ID token"
+    required: false
   project-slug:
     description: "Source project slug"
     required: true

@@ -1,10 +1,13 @@
 import core from "@actions/core";
-import { UALogin, getRawSecrets } from "./infisical.js";
+import { UALogin, getRawSecrets, oidcLogin } from "./infisical.js";
 import fs from "fs/promises";
 
 try {
+  const method = core.getInput("method");
   const UAClientId = core.getInput("client-id");
   const UAClientSecret = core.getInput("client-secret");
+  const identityId = core.getInput("identity-id");
+  const oidcAudience = core.getInput("oidc-audience");
   const domain = core.getInput("domain");
   const envSlug = core.getInput("env-slug");
   const projectSlug = core.getInput("project-slug");
@@ -15,11 +18,34 @@ try {
   const shouldRecurse = core.getBooleanInput("recursive");
 
   // get infisical token using UA credentials
-  const infisicalToken = await UALogin({
-    domain,
-    clientId: UAClientId,
-    clientSecret: UAClientSecret,
-  });
+  let infisicalToken;
+
+  switch (method) {
+    case "universal": {
+      if (!(UAClientId && UAClientSecret)) {
+        throw new Error("Missing universal auth credentials");
+      }
+      infisicalToken = await UALogin({
+        domain,
+        clientId: UAClientId,
+        clientSecret: UAClientSecret,
+      });
+      break;
+    }
+    case "oidc": {
+      if (!identityId) {
+        throw new Error("Missing identity ID");
+      }
+      infisicalToken = await oidcLogin({
+        domain,
+        identityId,
+        oidcAudience,
+      });
+      break;
+    }
+    default:
+      throw new Error("Invalid authentication method");
+  }
 
   // get secrets from Infisical using input params
   const keyValueSecrets = await getRawSecrets({
