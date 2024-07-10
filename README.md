@@ -8,11 +8,13 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 - This action supports two ways to authenticate your workflows with Infisical - universal auth and OIDC.
 
 ### Universal Auth
+
 - Configure a machine identity to have an auth method of "Universal Auth".
 - Get the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
 - Set the `client-id` and `client-secret` input parameters.
 
 ### OIDC Auth
+
 - Configure a machine identity to use the "OIDC Auth" method. Set the bound audience, bound subject, and bound claims as needed for your setup.
 - Get the machine identity's ID.
 - Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
@@ -26,7 +28,7 @@ With this action, you can use your Infisical secrets in two ways: as environment
 Secrets are injected as environment variables and can be referenced by subsequent workflow steps.
 
 ```yaml
-- uses: Infisical/secrets-action@v1.0.6
+- uses: Infisical/secrets-action@v1.0.7
   with:
     client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
     client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
@@ -39,7 +41,7 @@ Secrets are injected as environment variables and can be referenced by subsequen
 Exports secrets to a file in your `GITHUB_WORKSPACE`, useful for applications that read from `.env` files.
 
 ```yaml
-- uses: Infisical/secrets-action@v1.0.6
+- uses: Infisical/secrets-action@v1.0.7
   with:
     client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
     client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
