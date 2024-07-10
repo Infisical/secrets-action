@@ -5,7 +5,17 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 ## Configuration
 
 - In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/universal-auth) for your project.
-- Extract the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
+- This action supports two ways to authenticate your workflows with Infisical - universal auth and OIDC.
+
+### Universal Auth
+- Configure a machine identity to have an auth method of "Universal Auth".
+- Get the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
+- Set the `client-id` and `client-secret` input parameters.
+
+### OIDC Auth
+- Configure a machine identity to use the "OIDC Auth" method. Set the bound audience, bound subject, and bound claims as needed for your setup.
+- Get the machine identity's ID.
+- Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
 
 ## Usage
 
@@ -49,13 +59,25 @@ steps:
 
 ## Inputs
 
+### `method`
+
+**Optional**. The authentication method to use. Defaults to `universal`
+
 ### `client-id`
 
-**Required**. Machine Identity client ID
+**Optional**. Machine Identity client ID
 
 ### `client-secret`
 
-**Required**. Machine Identity secret key
+**Optional**. Machine Identity secret key
+
+### `identity-id`
+
+**Optional**. Machine Identity ID
+
+### `oidc-audience`
+
+**Optional**. Custom aud claim for the signed Github ID token
 
 ### `project-slug`
 
