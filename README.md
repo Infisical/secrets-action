@@ -18,6 +18,7 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 - Configure a machine identity to use the "OIDC Auth" method. Set the bound audience, bound subject, and bound claims as needed for your setup.
 - Get the machine identity's ID.
 - Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
+- For debugging OIDC configuration issues, you can use GitHub's [actions-oidc-debugger](https://github.com/github/actions-oidc-debugger) tool. This tool helps you inspect the JWT claims and verify they match your configuration.
 
 ## Usage
 
@@ -91,7 +92,7 @@ steps:
 
 ### `domain`
 
-**Optional**. Infisical URL. Defaults to https://app.infisical.com
+**Optional**. Infisical URL. Defaults to https://app.infisical.com. If you're using Infisical EU (https://eu.infisical.com) or a self-hosted/dedicated instance, you will need to set the appropriate value for this field.
 
 ### `export-type`
 
