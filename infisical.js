@@ -84,7 +84,7 @@ export const getRawSecrets = async ({
 
     // process imported secrets
 
-    if(response.data.imports) { 
+    if (response.data.imports) { 
       const imports = response.data.imports;
       for (let i = imports.length - 1; i >= 0; i--) {
         const importedSecrets = imports[i].secrets;
