@@ -19,7 +19,7 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
     });
     return response.data.accessToken;
   } catch (err) {
-    core.error(`Error: ${err.response?.data?.message || err.message}`);
+    core.error(err.response?.data?.message || err.message);
     throw err;
   }
 };
@@ -44,7 +44,7 @@ export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
 
     return response.data.accessToken;
   } catch (err) {
-    core.error(`Error: ${err.response?.data?.message || err.message}`);
+    core.error(err.response?.data?.message || err.message);
     throw err;
   }
 };
@@ -98,7 +98,7 @@ export const getRawSecrets = async ({
 
     return keyValueSecrets;
   } catch (err) {
-    core.error(`Error: ${err.response?.data?.message || err.message}`);
+    core.error(err.response?.data?.message || err.message);
     throw err;
   }
 };
