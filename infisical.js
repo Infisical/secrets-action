@@ -44,11 +44,7 @@ export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
 
     return response.data.accessToken;
   } catch (err) {
-    console.log("OIDC IS", JSON.stringify(err, null, 2));
-    console.log("OIDC RESPONSE IS", err.response);
-    console.log("OIDC DATA IS", err.response?.data);
-    console.log("OIDC MESSAGE IS", err.response?.data?.message || err.message);
-    core.error("Error:", err.response?.data?.message || err.message);
+    core.error(`Error: ${err.response?.data?.message || err.message}`);
     throw err;
   }
 };
