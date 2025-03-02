@@ -29,7 +29,7 @@ With this action, you can use your Infisical secrets in two ways: as environment
 Secrets are injected as environment variables and can be referenced by subsequent workflow steps.
 
 ```yaml
-- uses: Infisical/secrets-action@v1.0.8
+- uses: Infisical/secrets-action@v1.0.9
   with:
     client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
     client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
@@ -42,7 +42,7 @@ Secrets are injected as environment variables and can be referenced by subsequen
 Exports secrets to a file in your `GITHUB_WORKSPACE`, useful for applications that read from `.env` files.
 
 ```yaml
-- uses: Infisical/secrets-action@v1.0.8
+- uses: Infisical/secrets-action@v1.0.9
   with:
     client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
     client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
