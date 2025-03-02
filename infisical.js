@@ -19,7 +19,6 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
     });
     return response.data.accessToken;
   } catch (err) {
-    console.log("ERR IS", JSON.stringify(err, null, 2));
     core.error("Error:", err.response?.data?.message || err.message);
     throw err;
   }
@@ -45,6 +44,7 @@ export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
 
     return response.data.accessToken;
   } catch (err) {
+    console.log("OIDC IS", JSON.stringify(err, null, 2));
     core.error("Error:", err.response?.data?.message || err.message);
     throw err;
   }
