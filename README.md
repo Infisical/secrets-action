@@ -19,6 +19,12 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 - Get the machine identity's ID.
 - Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
 - For debugging OIDC configuration issues, you can use GitHub's [actions-oidc-debugger](https://github.com/github/actions-oidc-debugger) tool. This tool helps you inspect the JWT claims and verify they match your configuration.
+- Add `id-token: write` to the permissions for your workflow:
+```
+permissions:
+  id-token: write
+  contents: read
+```
 
 ## Usage
 
