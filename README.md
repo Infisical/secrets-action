@@ -110,7 +110,7 @@ steps:
 
 ### `secret-path`
 
-**Optional**. Source secret path. Defaults to `/`
+**Optional**. Source secret path. Defaults to `/`.  Example: `/my-secret-path`.
 
 ### `include-imports`
 
