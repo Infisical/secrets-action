@@ -40,7 +40,7 @@ inputs:
     required: false
     default: "/.env"
   secret-path:
-    description: "Source path"
+    description: "Source path, example: `/my-secret-path`"
     required: false
     default: "/"
   include-imports:
