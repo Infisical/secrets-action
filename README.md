@@ -5,13 +5,7 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 ## Configuration
 
 - In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/universal-auth) for your project.
-- This action supports two ways to authenticate your workflows with Infisical - universal auth and OIDC.
-
-### Universal Auth
-
-- Configure a machine identity to have an auth method of "Universal Auth".
-- Get the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
-- Set the `client-id` and `client-secret` input parameters.
+- This action supports two ways to authenticate your workflows with Infisical - OIDC and universal auth.
 
 ### OIDC Auth
 
@@ -26,6 +20,12 @@ permissions:
   contents: read
 ```
 
+### Universal Auth
+
+- Configure a machine identity to have an auth method of "Universal Auth".
+- Get the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
+- Set the `client-id` and `client-secret` input parameters.
+
 ## Usage
 
 With this action, you can use your Infisical secrets in two ways: as environment variables or as a file.
@@ -37,10 +37,11 @@ Secrets are injected as environment variables and can be referenced by subsequen
 ```yaml
 - uses: Infisical/secrets-action@v1.0.9
   with:
-    client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
-    client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
+    method: "oidc"
+    identity-id: "24be0d94-b43a-41c4-812c-1e8654d9ce1e"
+    domain: "https://app.infisical.com" # Update to the instance URL when using EU (https://eu.infisical.com), a dedicated instance, or a self-hosted instance
     env-slug: "dev"
-    project-slug: "example-project-r-i3x"
+    project-slug: "cli-integration-tests-9-edj"
 ```
 
 ### As a file
@@ -50,10 +51,11 @@ Exports secrets to a file in your `GITHUB_WORKSPACE`, useful for applications th
 ```yaml
 - uses: Infisical/secrets-action@v1.0.9
   with:
-    client-id: ${{ secrets.MACHINE_IDENTITY_CLIENT_ID }} # Update this to your own Github references
-    client-secret: ${{ secrets.MACHINE_IDENTITY_CLIENT_SECRET }} # Update this to your own Github references
+    method: "oidc"
+    identity-id: "24be0d94-b43a-41c4-812c-1e8654d9ce1e"
+    domain: "https://app.infisical.com" # Update to the instance URL when using EU (https://eu.infisical.com), a dedicated instance, or a self-hosted instance
     env-slug: "dev"
-    project-slug: "example-project-r-i3x"
+    project-slug: "cli-integration-tests-9-edj"
     export-type: "file"
     file-output-path: "/src/.env" # defaults to "/.env"
 ```
