@@ -4,8 +4,8 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 
 ## Configuration
 
-- In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/universal-auth) for your project.
-- This action supports two ways to authenticate your workflows with Infisical - OIDC and universal auth.
+- In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/machine-identities) for your project.
+- This action supports two ways to authenticate your workflows with Infisical - [OIDC](https://infisical.com/docs/documentation/platform/identities/oidc-auth/github) and [universal auth](https://infisical.com/docs/documentation/platform/identities/universal-auth).
 
 ### OIDC Auth
 
@@ -72,7 +72,7 @@ steps:
 
 ### `method`
 
-**Optional**. The authentication method to use. Defaults to `universal`
+**Optional**. The authentication method to use. Defaults to `universal`. Possible values are `universal` and `oidc`
 
 ### `client-id`
 
