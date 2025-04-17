@@ -58,11 +58,6 @@ try {
     shouldRecurse,
   });
 
-  // Mask secrets in GitHub logs
-  Object.entries(keyValueSecrets).forEach(([, value]) => {
-    core.setSecret(value);
-  });
-
   core.debug(
     `Exporting the following envs", ${JSON.stringify(
       Object.keys(keyValueSecrets)
@@ -73,6 +68,7 @@ try {
   if (exportType === "env") {
     // Write the secrets to action ENV
     Object.entries(keyValueSecrets).forEach(([key, value]) => {
+      core.setSecret(value);
       core.exportVariable(key, value);
     });
     core.info("Injected secrets as environment variables");
