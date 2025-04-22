@@ -1,0 +1,90 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Next Version
+        id: semver
+        uses: ietf-tools/semver-action@v1
+        with:
+          token: ${{ github.token }}
+          noVersionBumpBehavior: patch
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Create Changelog
+        id: changelog
+        uses: requarks/changelog-action@v1
+        with:
+          token: ${{ github.token }}
+          fromTag: ${{ github.ref_name }}
+          toTag: ${{ steps.semver.outputs.current }}
+          writeToFile: false
+          excludeTypes: build,docs,style
+          excludeScopes: deploy,version
+          includeInvalidCommits: true
+
+      - name: Git config
+        uses: snow-actions/git-config-user@v1.0.0
+        with:
+          name: github-actions
+          email: 'github-actions[bot]@users.noreply.github.com'
+
+      - name: Switch branch
+        env:
+          MAJOR: ${{ steps.semver.outputs.nextMajor }}
+        run: |
+          if git checkout $MAJOR 2>/dev/null; then
+            echo "Branch $MAJOR already checked out"
+            git pull --ff --no-edit origin main
+          else
+            echo "Branch $MAJOR not yet checked out - checking out now"
+            git checkout -b "$MAJOR"
+          fi
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Bump version
+        env:
+          NEW_VERSION: ${{ steps.semver.outputs.next }}
+        run: npm version --no-git-tag-version $NEW_VERSION
+
+      - name: Install dependencies
+        run: npm ci
+
+      # - name: Test
+      #   run: npm run test
+
+      - name: Build
+        run: npm run build
+
+      - name: Unlock dist
+        run: |
+          rm dist/.gitignore || true
+
+      - name: Commit
+        uses: EndBug/add-and-commit@v9
+        with:
+          add: "."
+          message: "other: Version ${{ steps.semver.outputs.next }}"
+          push: "--set-upstream origin ${{ steps.semver.outputs.nextMajor }}"
+
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ github.token }}
+          tag: ${{ steps.semver.outputs.next }}
+          body: ${{ steps.changelog.outputs.changes }}
