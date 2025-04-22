@@ -76,7 +76,7 @@ jobs:
         uses: EndBug/add-and-commit@v9
         with:
           add: "."
-          message: "other: Version ${{ steps.semver.outputs.next }}"
+          message: "chore(version): Build ${{ steps.semver.outputs.next }}"
           push: "--set-upstream origin ${{ steps.semver.outputs.nextMajor }}"
 
       - name: Release
