@@ -1,6 +1,7 @@
 import core from "@actions/core";
 import { UALogin, getRawSecrets, oidcLogin } from "./infisical.js";
 import fs from "fs/promises";
+import path from "path";
 
 try {
   const method = core.getInput("method");
