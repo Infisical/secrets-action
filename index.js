@@ -79,7 +79,7 @@ try {
       .join("\n");
 
     try {
-      const filePath = `${process.env.GITHUB_WORKSPACE}${fileOutputPath}`;
+      const filePath = path.join(process.env.GITHUB_WORKSPACE, fileOutputPath);
       core.info(`Exporting secrets to ${filePath}`);
       await fs.writeFile(filePath, fileContent);
     } catch (err) {
