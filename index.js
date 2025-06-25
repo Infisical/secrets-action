@@ -1,6 +1,7 @@
 import core from "@actions/core";
 import { UALogin, getRawSecrets, oidcLogin, awsIamLogin } from "./infisical.js";
 import fs from "fs/promises";
+import { AuthMethod } from "./constants.js";
 
 try {
   const method = core.getInput("method");
@@ -21,7 +22,7 @@ try {
   let infisicalToken;
 
   switch (method) {
-    case "universal": {
+    case AuthMethod.Universal: {
       if (!(UAClientId && UAClientSecret)) {
         throw new Error("Missing universal auth credentials");
       }
@@ -32,7 +33,7 @@ try {
       });
       break;
     }
-    case "oidc": {
+    case AuthMethod.Oidc: {
       if (!identityId) {
         throw new Error("Missing identity ID for OIDC auth");
       }
@@ -43,7 +44,7 @@ try {
       });
       break;
     }
-    case "aws-iam": {
+    case AuthMethod.AwsIam: {
       if (!identityId) {
         throw new Error("Missing identity ID for AWS IAM auth");
       }
