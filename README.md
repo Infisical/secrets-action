@@ -5,7 +5,7 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 ## Configuration
 
 - In order to use this, you will need to configure a [Machine Identity](https://infisical.com/docs/documentation/platform/identities/machine-identities) for your project.
-- This action supports two ways to authenticate your workflows with Infisical - [OIDC](https://infisical.com/docs/documentation/platform/identities/oidc-auth/github) and [universal auth](https://infisical.com/docs/documentation/platform/identities/universal-auth).
+- This action supports three ways to authenticate your workflows with Infisical - [OIDC](https://infisical.com/docs/documentation/platform/identities/oidc-auth/github), [universal auth](https://infisical.com/docs/documentation/platform/identities/universal-auth), and [AWS auth](https://infisical.com/docs/documentation/platform/identities/aws-auth).
 
 ### OIDC Auth
 
@@ -14,6 +14,7 @@ This GitHub Action enables you to import secrets from Infisical—whether hosted
 - Set `method` to oidc and configure the `identity-id` input parameter. Optionally, customize the JWT's aud field by setting the `oidc-audience` input parameter.
 - For debugging OIDC configuration issues, you can use GitHub's [actions-oidc-debugger](https://github.com/github/actions-oidc-debugger) tool. This tool helps you inspect the JWT claims and verify they match your configuration.
 - Add `id-token: write` to the permissions for your workflow:
+
 ```
 permissions:
   id-token: write
@@ -25,6 +26,14 @@ permissions:
 - Configure a machine identity to have an auth method of "Universal Auth".
 - Get the machine identity's `client_id` and `client_secret` and store them as Github secrets (recommended) or environment variables.
 - Set the `client-id` and `client-secret` input parameters.
+
+### AWS Auth
+
+- Configure a machine identity to use the "AWS Auth" method. Set the allowed principal ARNs and account IDs as needed for your setup. Refer to the setup guide [here](https://infisical.com/docs/documentation/platform/identities/aws-auth).
+- Get the machine identity's ID.
+- Set `method` to aws and configure the `identity-id` input parameter.
+- Ensure your workflow has AWS credentials available via environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`, and optionally `AWS_SESSION_TOKEN`).
+- This method works seamlessly with GitHub's [configure-aws-credentials](https://github.com/aws-actions/configure-aws-credentials) action.
 
 ## Usage
 
@@ -72,23 +81,27 @@ steps:
 
 ### `method`
 
-**Optional**. The authentication method to use. Defaults to `universal`. Possible values are `universal` and `oidc`
+**Optional**. The authentication method to use. Defaults to `universal`. Possible values are `universal`, `oidc`, and `aws`.
 
 ### `client-id`
 
-**Optional**. Machine Identity client ID
+**Optional**. Machine Identity client ID (required for universal auth)
 
 ### `client-secret`
 
-**Optional**. Machine Identity secret key
+**Optional**. Machine Identity secret key (required for universal auth)
 
 ### `identity-id`
 
-**Optional**. Machine Identity ID
+**Optional**. Machine Identity ID (required for OIDC and AWS auth)
 
 ### `oidc-audience`
 
-**Optional**. Custom aud claim for the signed Github ID token
+**Optional**. Custom aud claim for the signed Github ID token (for OIDC auth)
+
+### `aws-region`
+
+**Optional**. AWS region for STS endpoint when using AWS auth. Defaults to `us-east-1`.
 
 ### `project-slug`
 
@@ -112,7 +125,7 @@ steps:
 
 ### `secret-path`
 
-**Optional**. Source secret path. Defaults to `/`.  Example: `/my-secret-path`.
+**Optional**. Source secret path. Defaults to `/`. Example: `/my-secret-path`.
 
 ### `include-imports`
 

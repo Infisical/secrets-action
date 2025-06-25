@@ -6,7 +6,7 @@ branding:
   color: "yellow"
 inputs:
   method:
-    description: "The authentication method to use"
+    description: "The authentication method to use (universal, oidc, aws)"
     required: false
     default: "universal"
   client-id:
@@ -21,6 +21,10 @@ inputs:
   oidc-audience:
     description: "Custom aud claim for the signed Github ID token"
     required: false
+  aws-region:
+    description: "AWS region for STS endpoint (defaults to us-east-1)"
+    required: false
+    default: "us-east-1"
   project-slug:
     description: "Source project slug"
     required: true

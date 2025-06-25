@@ -1,5 +1,5 @@
 import core from "@actions/core";
-import { UALogin, getRawSecrets, oidcLogin } from "./infisical.js";
+import { UALogin, getRawSecrets, oidcLogin, awsLogin } from "./infisical.js";
 import fs from "fs/promises";
 
 try {
@@ -8,6 +8,7 @@ try {
   const UAClientSecret = core.getInput("client-secret");
   const identityId = core.getInput("identity-id");
   const oidcAudience = core.getInput("oidc-audience");
+  const awsRegion = core.getInput("aws-region");
   const domain = core.getInput("domain");
   const envSlug = core.getInput("env-slug");
   const projectSlug = core.getInput("project-slug");
@@ -17,7 +18,7 @@ try {
   const shouldIncludeImports = core.getBooleanInput("include-imports");
   const shouldRecurse = core.getBooleanInput("recursive");
 
-  // get infisical token using UA credentials
+  // get infisical token using auth credentials
   let infisicalToken;
 
   switch (method) {
@@ -40,6 +41,17 @@ try {
         domain,
         identityId,
         oidcAudience,
+      });
+      break;
+    }
+    case "aws": {
+      if (!identityId) {
+        throw new Error("Missing identity ID for AWS auth");
+      }
+      infisicalToken = await awsLogin({
+        domain,
+        identityId,
+        region: awsRegion,
       });
       break;
     }
