@@ -1,5 +1,5 @@
 import core from "@actions/core";
-import { UALogin, getRawSecrets, oidcLogin } from "./infisical.js";
+import { UALogin, getRawSecrets, oidcLogin, awsIamLogin } from "./infisical.js";
 import fs from "fs/promises";
 
 try {
@@ -17,7 +17,7 @@ try {
   const shouldIncludeImports = core.getBooleanInput("include-imports");
   const shouldRecurse = core.getBooleanInput("recursive");
 
-  // get infisical token using UA credentials
+  // get infisical token using credentials
   let infisicalToken;
 
   switch (method) {
@@ -34,7 +34,7 @@ try {
     }
     case "oidc": {
       if (!identityId) {
-        throw new Error("Missing identity ID");
+        throw new Error("Missing identity ID for OIDC auth");
       }
       infisicalToken = await oidcLogin({
         domain,
@@ -43,8 +43,18 @@ try {
       });
       break;
     }
+    case "aws-iam": {
+      if (!identityId) {
+        throw new Error("Missing identity ID for AWS IAM auth");
+      }
+      infisicalToken = await awsIamLogin({
+        domain,
+        identityId,
+      });
+      break;
+    }
     default:
-      throw new Error("Invalid authentication method");
+      throw new Error(`Invalid authentication method: ${method}`);
   }
 
   // get secrets from Infisical using input params
