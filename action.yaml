@@ -6,7 +6,7 @@ branding:
   color: "yellow"
 inputs:
   method:
-    description: "The authentication method to use"
+    description: "The authentication method to use (universal, oidc, aws-iam)"
     required: false
     default: "universal"
   client-id:
