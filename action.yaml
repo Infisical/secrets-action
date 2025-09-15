@@ -51,6 +51,10 @@ inputs:
     description: "If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories"
     required: false
     default: false
+  extra-headers:
+    description: "Extra headers to add to all requests sent to Infisical"
+    required: false
+    default: ""
 runs:
   using: "node20"
   main: "index.js"
