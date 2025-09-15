@@ -139,3 +139,16 @@ steps:
 ### `recursive`
 
 **Optional**. If set to `true`, it will fetch all secrets from the specified base path and all of its subdirectories. Defaults to `false`
+
+### `extra-headers`
+
+**Optional**. You can optionally provide extra headers that will be included in every request made to Infisical. This is useful if you if Infisical is behind a header-based firewall.
+
+Example:
+
+```yaml
+extra-headers: |
+    Example-Header: Header-Value
+    X-Request-Id: 1234567890
+    X-Authentication-Secret: ${{ secrets.AUTH_SECRET }}
+```
