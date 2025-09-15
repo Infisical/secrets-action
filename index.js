@@ -43,6 +43,8 @@ try {
   // get infisical token using credentials
   let infisicalToken;
 
+  console.log('Extra Headers:', JSON.stringify(extraHeaders, null, 4));
+
   const axiosInstance = createAxiosInstance(domain, extraHeaders);
 
   switch (method) {
