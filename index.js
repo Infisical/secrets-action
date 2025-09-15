@@ -6,10 +6,16 @@ import { AuthMethod } from "./constants.js";
 function parseHeadersInput(inputKey, inputOptions) {
   /** @type {string}*/
   const rawHeadersString = core.getInput(inputKey, inputOptions) || '';
+
+  console.log('Raw Headers String:', rawHeadersString);
+
   const headerStrings = rawHeadersString
     .split('\n')
     .map(line => line.trim())
     .filter(line => line !== '');
+
+  console.log('Header Strings:', JSON.stringify(headerStrings, null, 4));
+
   return headerStrings
     .reduce((map, line) => {
       const seperator = line.indexOf(':');
