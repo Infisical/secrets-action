@@ -20,3 +20,7 @@ jobs:
                   domain: "https://app.infisical.com"
                   env-slug: "dev"
                   project-slug: "aaa-o7en-s5qm"
+                  extra-headers: |
+                      Demo-Header: Something
+                      Demo-Header-2: Something-2
+                      Secure-Id: 1234567890
