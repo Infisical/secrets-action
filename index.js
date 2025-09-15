@@ -3,10 +3,8 @@ import { UALogin, getRawSecrets, oidcLogin, awsIamLogin, createAxiosInstance } f
 import fs from "fs/promises";
 import { AuthMethod } from "./constants.js";
 
-function parseHeadersInput(inputKey, inputOptions) {
-  /** @type {string}*/
-  const rawHeadersString = core.getInput(inputKey, inputOptions) || '';
-
+function parseHeadersInput(inputKey) {
+  const rawHeadersString = core.getInput(inputKey) || '';
   console.log('Raw Headers String:', rawHeadersString);
 
   const headerStrings = rawHeadersString
@@ -17,17 +15,17 @@ function parseHeadersInput(inputKey, inputOptions) {
   console.log('Header Strings:', JSON.stringify(headerStrings, null, 4));
 
   const parsedHeaderStrings = headerStrings
-    .reduce((map, line) => {
+    .reduce((obj, line) => {
       const seperator = line.indexOf(':');
       const key = line.substring(0, seperator).trim().toLowerCase();
       const value = line.substring(seperator + 1).trim();
-      if (map.has(key)) {
-        map.set(key, [map.get(key), value].join(', '));
+      if (obj[key]) {
+        obj[key] = [obj[key], value].join(', ');
       } else {
-        map.set(key, value);
+        obj[key] = value;
       }
-      return map;
-    }, new Map());
+      return obj;
+    }, {});
 
   console.log('Parsed Header Strings:', JSON.stringify(parsedHeaderStrings, null, 4));
 
