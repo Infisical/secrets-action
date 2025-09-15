@@ -8,7 +8,6 @@ import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants.js";
 
 export const createAxiosInstance = (domain, defaultHeaders) => {
-
   return axios.create({
     baseURL: domain,
     ...(defaultHeaders && { headers: defaultHeaders }),
@@ -30,6 +29,11 @@ export const UALogin = async ({ clientId, clientSecret, axiosInstance }) => {
       },
       data: loginData,
     });
+
+
+    core.info(JSON.stringify(response.request.headers, null, 4));
+
+
     return response.data.accessToken;
   } catch (err) {
     core.error(err.response?.data?.message || err.message);
