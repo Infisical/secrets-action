@@ -16,7 +16,7 @@ function parseHeadersInput(inputKey, inputOptions) {
 
   console.log('Header Strings:', JSON.stringify(headerStrings, null, 4));
 
-  return headerStrings
+  const parsedHeaderStrings = headerStrings
     .reduce((map, line) => {
       const seperator = line.indexOf(':');
       const key = line.substring(0, seperator).trim().toLowerCase();
@@ -28,6 +28,10 @@ function parseHeadersInput(inputKey, inputOptions) {
       }
       return map;
     }, new Map());
+
+  console.log('Parsed Header Strings:', JSON.stringify(parsedHeaderStrings, null, 4));
+
+  return parsedHeaderStrings;
 }
 
 try {
