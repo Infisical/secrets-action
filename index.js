@@ -5,14 +5,11 @@ import { AuthMethod } from "./constants.js";
 
 function parseHeadersInput(inputKey) {
   const rawHeadersString = core.getInput(inputKey) || '';
-  console.log('Raw Headers String:', rawHeadersString);
 
   const headerStrings = rawHeadersString
     .split('\n')
     .map(line => line.trim())
     .filter(line => line !== '');
-
-  console.log('Header Strings:', JSON.stringify(headerStrings, null, 4));
 
   const parsedHeaderStrings = headerStrings
     .reduce((obj, line) => {
@@ -26,8 +23,6 @@ function parseHeadersInput(inputKey) {
       }
       return obj;
     }, {});
-
-  console.log('Parsed Header Strings:', JSON.stringify(parsedHeaderStrings, null, 4));
 
   return parsedHeaderStrings;
 }
@@ -50,8 +45,6 @@ try {
 
   // get infisical token using credentials
   let infisicalToken;
-
-  console.log('Extra Headers:', JSON.stringify(extraHeaders, null, 4));
 
   const axiosInstance = createAxiosInstance(domain, extraHeaders);
 

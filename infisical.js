@@ -13,17 +13,6 @@ export const createAxiosInstance = (domain, defaultHeaders) => {
     ...(defaultHeaders && { headers: defaultHeaders }),
   });
 
-
-  instance.interceptors.request.use(
-    (config) => {
-      console.log('Request Headers:', JSON.stringify(config.headers, null, 4));
-      return config;
-    },
-    (error) => {
-      return Promise.reject(error);
-    }
-  );
-
   return instance;
 }
 
