@@ -7,21 +7,32 @@ import { HttpRequest } from "@aws-sdk/protocol-http";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants.js";
 
-export const UALogin = async ({ clientId, clientSecret, domain }) => {
+export const createAxiosInstance = (domain, defaultHeaders) => {
+  const instance = axios.create({
+    baseURL: domain,
+    ...(defaultHeaders && { headers: defaultHeaders }),
+  });
+
+  return instance;
+}
+
+export const UALogin = async ({ clientId, clientSecret, axiosInstance }) => {
   const loginData = querystring.stringify({
     clientId,
     clientSecret,
   });
 
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       method: "post",
-      url: `${domain}/api/v1/auth/universal-auth/login`,
+      url: "/api/v1/auth/universal-auth/login",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       data: loginData,
     });
+
+
     return response.data.accessToken;
   } catch (err) {
     core.error(err.response?.data?.message || err.message);
@@ -29,7 +40,7 @@ export const UALogin = async ({ clientId, clientSecret, domain }) => {
   }
 };
 
-export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
+export const oidcLogin = async ({ identityId, oidcAudience, axiosInstance }) => {
   const idToken = await core.getIDToken(oidcAudience);
 
   const loginData = querystring.stringify({
@@ -38,9 +49,9 @@ export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
   });
 
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       method: "post",
-      url: `${domain}/api/v1/auth/oidc-auth/login`,
+      url: "/api/v1/auth/oidc-auth/login",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -54,10 +65,10 @@ export const oidcLogin = async ({ identityId, domain, oidcAudience }) => {
   }
 };
 
-export const awsIamLogin = async ({ identityId, domain }) => {
+export const awsIamLogin = async ({ identityId, axiosInstance }) => {
   try {
     // Get AWS region
-    const region = await getAwsRegion();
+    const region = await getAwsRegion(axiosInstance);
 
     // Get AWS credentials
     const credentials = await fromNodeProviderChain()();
@@ -117,9 +128,9 @@ export const awsIamLogin = async ({ identityId, domain }) => {
       ),
     });
 
-    const response = await axios({
+    const response = await axiosInstance({
       method: "post",
-      url: `${domain}/api/v1/auth/aws-auth/login`,
+      url: "/api/v1/auth/aws-auth/login",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
@@ -133,7 +144,7 @@ export const awsIamLogin = async ({ identityId, domain }) => {
   }
 };
 
-const getAwsRegion = async () => {
+const getAwsRegion = async (axiosInstance) => {
   const region = process.env.AWS_REGION; // Typically found in lambda runtime environment
   if (region) {
     return region;
@@ -177,11 +188,12 @@ export const getRawSecrets = async ({
   secretPath,
   shouldIncludeImports,
   shouldRecurse,
+  axiosInstance,
 }) => {
   try {
-    const response = await axios({
+    const response = await axiosInstance({
       method: "get",
-      url: `${domain}/api/v3/secrets/raw`,
+      url: "/api/v3/secrets/raw",
       headers: {
         Authorization: `Bearer ${infisicalToken}`,
       },

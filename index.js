@@ -1,7 +1,31 @@
 import core from "@actions/core";
-import { UALogin, getRawSecrets, oidcLogin, awsIamLogin } from "./infisical.js";
+import { UALogin, getRawSecrets, oidcLogin, awsIamLogin, createAxiosInstance } from "./infisical.js";
 import fs from "fs/promises";
 import { AuthMethod } from "./constants.js";
+
+function parseHeadersInput(inputKey) {
+  const rawHeadersString = core.getInput(inputKey) || '';
+
+  const headerStrings = rawHeadersString
+    .split('\n')
+    .map(line => line.trim())
+    .filter(line => line !== '');
+
+  const parsedHeaderStrings = headerStrings
+    .reduce((obj, line) => {
+      const seperator = line.indexOf(':');
+      const key = line.substring(0, seperator).trim().toLowerCase();
+      const value = line.substring(seperator + 1).trim();
+      if (obj[key]) {
+        obj[key] = [obj[key], value].join(', ');
+      } else {
+        obj[key] = value;
+      }
+      return obj;
+    }, {});
+
+  return parsedHeaderStrings;
+}
 
 try {
   const method = core.getInput("method");
@@ -17,9 +41,12 @@ try {
   const fileOutputPath = core.getInput("file-output-path");
   const shouldIncludeImports = core.getBooleanInput("include-imports");
   const shouldRecurse = core.getBooleanInput("recursive");
+  const extraHeaders = parseHeadersInput("extra-headers");
 
   // get infisical token using credentials
   let infisicalToken;
+
+  const axiosInstance = createAxiosInstance(domain, extraHeaders);
 
   switch (method) {
     case AuthMethod.Universal: {
@@ -27,9 +54,9 @@ try {
         throw new Error("Missing universal auth credentials");
       }
       infisicalToken = await UALogin({
-        domain,
+        axiosInstance,
         clientId: UAClientId,
-        clientSecret: UAClientSecret,
+        clientSecret: UAClientSecret
       });
       break;
     }
@@ -38,9 +65,9 @@ try {
         throw new Error("Missing identity ID for OIDC auth");
       }
       infisicalToken = await oidcLogin({
-        domain,
+        axiosInstance,
         identityId,
-        oidcAudience,
+        oidcAudience
       });
       break;
     }
@@ -49,8 +76,8 @@ try {
         throw new Error("Missing identity ID for AWS IAM auth");
       }
       infisicalToken = await awsIamLogin({
-        domain,
-        identityId,
+        axiosInstance,
+        identityId
       });
       break;
     }
@@ -60,20 +87,16 @@ try {
 
   // get secrets from Infisical using input params
   const keyValueSecrets = await getRawSecrets({
-    domain,
+    axiosInstance,
     envSlug,
     infisicalToken,
     projectSlug,
     secretPath,
     shouldIncludeImports,
-    shouldRecurse,
+    shouldRecurse
   });
 
-  core.debug(
-    `Exporting the following envs", ${JSON.stringify(
-      Object.keys(keyValueSecrets)
-    )}`
-  );
+  core.debug(`Exporting the following envs", ${JSON.stringify(Object.keys(keyValueSecrets))}`);
 
   // export fetched secrets
   if (exportType === "env") {
@@ -86,7 +109,7 @@ try {
   } else if (exportType === "file") {
     // Write the secrets to a file at the specified path
     const fileContent = Object.keys(keyValueSecrets)
-      .map((key) => `${key}='${keyValueSecrets[key]}'`)
+      .map(key => `${key}='${keyValueSecrets[key]}'`)
       .join("\n");
 
     try {
