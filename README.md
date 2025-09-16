@@ -142,7 +142,7 @@ steps:
 
 ### `extra-headers`
 
-**Optional**. You can optionally provide extra headers that will be included in every request made to Infisical. This is useful if you if Infisical is behind a header-based firewall.
+**Optional**. You can optionally provide extra headers that will be included in every request made to Infisical. This is useful if your Infisical instance is behind a header-based firewall.
 
 Example:
 
