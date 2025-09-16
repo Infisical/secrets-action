@@ -151,7 +151,7 @@ const getAwsRegion = async (axiosInstance) => {
   }
 
   try {
-    const tokenResponse = await axiosInstance.put(
+    const tokenResponse = await axios.put(
       AWS_TOKEN_METADATA_URI,
       undefined,
       {
@@ -162,7 +162,7 @@ const getAwsRegion = async (axiosInstance) => {
       }
     );
 
-    const identityResponse = await axiosInstance.get(
+    const identityResponse = await axios.get(
       AWS_IDENTITY_DOCUMENT_URI,
       {
         headers: {
