@@ -7,6 +7,15 @@ import { HttpRequest } from "@aws-sdk/protocol-http";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants.js";
 
+
+const handleError = (err) => {
+  core.error(err.response?.data?.message || err.message);
+  if (typeof err?.response?.data === "object") {
+    core.error(JSON.stringify(err?.response?.data, null, 4));
+  }
+  throw err;
+}
+
 export const createAxiosInstance = (domain, defaultHeaders) => {
   const instance = axios.create({
     baseURL: domain,
@@ -35,8 +44,7 @@ export const UALogin = async ({ clientId, clientSecret, axiosInstance }) => {
 
     return response.data.accessToken;
   } catch (err) {
-    core.error(err.response?.data?.message || err.message);
-    throw err;
+    handleError(err);
   }
 };
 
@@ -60,8 +68,7 @@ export const oidcLogin = async ({ identityId, oidcAudience, axiosInstance }) => 
 
     return response.data.accessToken;
   } catch (err) {
-    core.error(err.response?.data?.message || err.message);
-    throw err;
+    handleError(err);
   }
 };
 
@@ -139,8 +146,7 @@ export const awsIamLogin = async ({ identityId, axiosInstance }) => {
 
     return response.data.accessToken;
   } catch (err) {
-    core.error(err.response?.data?.message || err.message);
-    throw err;
+    handleError(err);
   }
 };
 
@@ -175,8 +181,7 @@ const getAwsRegion = async (axiosInstance) => {
 
     return identityResponse.data.region;
   } catch (error) {
-    core.error(error.response?.data?.message || error.message);
-    throw error;
+    handleError(error);
   }
 };
 
@@ -229,7 +234,6 @@ export const getRawSecrets = async ({
 
     return keyValueSecrets;
   } catch (err) {
-    core.error(err.response?.data?.message || err.message);
-    throw err;
+    handleError(err);
   }
 };
