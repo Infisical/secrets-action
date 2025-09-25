@@ -1,0 +1,74 @@
+name: CI
+on:
+    push:
+        branches: [main]
+        paths-ignore:
+            - "README.md"
+    pull_request:
+        branches: [main]
+        paths-ignore:
+            - "README.md"
+
+permissions:
+    pull-requests: write
+    contents: write
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/setup-node@v5
+              with:
+                  node-version: 20.x
+            - run: npm ci
+            - run: npm run build
+            - run: npm run format-check
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: dist
+                  path: dist
+            - uses: actions/upload-artifact@v4
+              with:
+                  name: action.yml
+                  path: action.yml
+
+    test:
+        if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
+        needs: [build]
+        runs-on: ubuntu-latest
+        strategy:
+            matrix:
+                target: [built, committed]
+        steps:
+            - uses: actions/checkout@v5
+            - if: matrix.target == 'built' || github.event_name == 'pull_request'
+              uses: actions/download-artifact@v5
+              with:
+                  name: dist
+                  path: dist
+            - if: matrix.target == 'built' || github.event_name == 'pull_request'
+              uses: actions/download-artifact@v5
+              with:
+                  name: action.yml
+                  path: .
+
+    package:
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        needs: [test]
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v5
+            - uses: actions/download-artifact@v5
+              with:
+                  name: dist
+                  path: dist
+            - name: Create Pull Request
+              uses: peter-evans/create-pull-request@v7
+              with:
+                  token: ${{ secrets.GITHUB_TOKEN }}
+                  commit-message: Update distribution
+                  title: Update distribution
+                  body: |
+                      - Updates the distribution for changes on `main` by CI
+                  branch: update-distribution

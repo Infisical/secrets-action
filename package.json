@@ -4,6 +4,11 @@
   "description": "Github action to load secrets from Infisical",
   "main": "dist/index.js",
   "type": "module",
+  "scripts": {
+    "build": "rollup --config rollup.config.js",
+    "format-check": "prettier --check '**/*.js' --ignore-path ./dist/**"
+
+  },
   "bugs": {
     "url": "https://github.com/Infisical/secrets-action/issues"
   },
@@ -26,6 +31,7 @@
     "@rollup/plugin-commonjs": "^28.0.6",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^16.0.1",
+    "prettier": "^3.6.2",
     "rollup": "^4.52.2"
   }
 }
