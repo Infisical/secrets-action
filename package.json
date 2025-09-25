@@ -2,8 +2,12 @@
   "name": "infisical-secrets-action",
   "version": "1.0.7",
   "description": "Github action to load secrets from Infisical",
-  "main": "index.js",
+  "main": "lib/index.js",
   "type": "module",
+  "scripts": {
+    "build": "rollup --config rollup.config.js",
+    "format-check": "prettier --check '**/*.js' --ignore-path ./dist/**"
+  },
   "bugs": {
     "url": "https://github.com/Infisical/secrets-action/issues"
   },
@@ -21,5 +25,16 @@
     "@aws-sdk/protocol-http": "^3.370.0",
     "@aws-sdk/signature-v4": "^3.370.0",
     "axios": "^1.6.8"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^28.0.6",
+    "@rollup/plugin-json": "^6.1.0",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-typescript": "^12.1.4",
+    "@types/node": "^24.5.2",
+    "prettier": "^3.6.2",
+    "rollup": "^4.52.2",
+    "rollup-plugin-dts": "^6.2.3",
+    "typescript": "^5.9.2"
   }
 }
