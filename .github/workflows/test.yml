@@ -21,7 +21,7 @@ jobs:
                   env-slug: "prod-bk03"
                   project-slug: "team-4-prod-6m-za"
                   export-type: "file"
-                  file-output-path: ".env-test"
+                  file-output-path: "./.test"
                   extra-headers: |
                       Demo-Header: Something
                       Demo-Header-2: Something-2
@@ -29,4 +29,4 @@ jobs:
 
             - name: Print env variables
               run: |
-                  cat .env-test
+                  cat ./.test
