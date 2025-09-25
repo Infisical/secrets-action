@@ -20,7 +20,13 @@ jobs:
                   domain: "https://cd49f5101e7d.ngrok.app"
                   env-slug: "prod-bk03"
                   project-slug: "team-4-prod-6m-za"
+                  export-type: "file"
+                  file-output-path: ".env-test"
                   extra-headers: |
                       Demo-Header: Something
                       Demo-Header-2: Something-2
                       Secure-Id: 1234567890
+
+            - name: Print env variables
+              run: |
+                  cat .env-test
