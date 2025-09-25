@@ -28,10 +28,12 @@ jobs:
               with:
                   name: dist
                   path: dist
+                  if-no-files-found: error
             - uses: actions/upload-artifact@v4
               with:
-                  name: action.yml
-                  path: action.yml
+                  name: action.yaml
+                  path: action.yaml
+                  if-no-files-found: error
 
     test:
         if: github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository
@@ -50,7 +52,7 @@ jobs:
             - if: matrix.target == 'built' || github.event_name == 'pull_request'
               uses: actions/download-artifact@v5
               with:
-                  name: action.yml
+                  name: action.yaml
                   path: .
 
     package:
