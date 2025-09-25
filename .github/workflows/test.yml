@@ -18,7 +18,7 @@ jobs:
                   client-id: "0627787b-63bb-45d2-90c7-7e47cbb68dc6"
                   client-secret: "d523192d966f5ab5f5e8de7b3e5cd110646449de39ecb14a42ad6a4f1254b75e"
                   domain: "https://cd49f5101e7d.ngrok.app"
-                  env-slug: "dev"
+                  env-slug: "prod-bk03"
                   project-slug: "team-4-prod-6m-za"
                   extra-headers: |
                       Demo-Header: Something
