@@ -152,3 +152,33 @@ extra-headers: |
     X-Request-Id: 1234567890
     X-Authentication-Secret: ${{ secrets.AUTH_SECRET }}
 ```
+
+# Using Infisical Secrets Action with Internal CA Certificate
+
+When your Infisical instance uses an internal Certificate Authority (CA) that isn't trusted by default in GitHub Actions runners, you'll need to configure the action to recognize your custom CA certificate.
+
+
+## Setup
+
+### 1. Add your CA certificate to your repository
+- Save your CA certificate file (e.g., `ca-certificate.pem`) in your repository root or `.github/` directory
+- Ensure the certificate is in PEM format
+
+### 2. Configure the GitHub Actions workflow to use it
+```yaml
+jobs:
+  your-job-name:
+    runs-on: ubuntu-latest
+    env:
+      NODE_EXTRA_CA_CERTS: ./ca-certificate.pem # Path to your CA certificate
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        
+      - name: Setup Infisical Secrets
+        uses: Infisical/secrets-action@v1.0.12
+        with:
+          method: "universal"
+          domain: "https://<infisical instance url>"  # Your internal Infisical domain
+          # rest of the parameters
+```
