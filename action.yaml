@@ -6,9 +6,12 @@ branding:
   color: "yellow"
 inputs:
   method:
-    description: "The authentication method to use (universal, oidc, aws-iam)"
+    description: "The authentication method to use (universal, oidc, aws-iam, service-token)"
     required: false
     default: "universal"
+  service-token:
+    description: "Infisical Service Token (only used when method is service-token)"
+    required: false
   client-id:
     description: "Machine Identity client ID"
     required: false
@@ -22,8 +25,11 @@ inputs:
     description: "Custom aud claim for the signed Github ID token"
     required: false
   project-slug:
-    description: "Source project slug"
-    required: true
+    description: "Source project slug (ignored if project-id is provided)"
+    required: false
+  project-id:
+    description: "Source project ID (UUID). Takes precedence over project-slug."
+    required: false
   env-slug:
     description: "Source environment slug"
     required: true

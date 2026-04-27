@@ -34,11 +34,13 @@ const main = async () => {
 		const method = core.getInput("method");
 		const UAClientId = core.getInput("client-id");
 		const UAClientSecret = core.getInput("client-secret");
+		const serviceToken = core.getInput("service-token");
 		const identityId = core.getInput("identity-id");
 		const oidcAudience = core.getInput("oidc-audience");
 		const domain = core.getInput("domain");
 		const envSlug = core.getInput("env-slug");
 		const projectSlug = core.getInput("project-slug");
+		const projectId = core.getInput("project-id");
 		const secretPath = core.getInput("secret-path");
 		const exportType = core.getInput("export-type");
 		const fileOutputPath = core.getInput("file-output-path");
@@ -84,6 +86,14 @@ const main = async () => {
 				});
 				break;
 			}
+			case AuthMethod.ServiceToken: {
+				if (!serviceToken) {
+					throw new Error("Missing service token for service-token auth");
+				}
+				// Service tokens are used directly as Bearer tokens - no login required
+				infisicalToken = serviceToken;
+				break;
+			}
 			default:
 				throw new Error(`Invalid authentication method: ${method}`);
 		}
@@ -94,6 +104,7 @@ const main = async () => {
 			envSlug,
 			infisicalToken,
 			projectSlug,
+			projectId,
 			secretPath,
 			shouldIncludeImports,
 			shouldRecurse

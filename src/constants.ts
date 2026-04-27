@@ -4,5 +4,6 @@ export const AWS_IDENTITY_DOCUMENT_URI = "http://169.254.169.254/latest/dynamic/
 export const AuthMethod = {
     Universal: "universal",
     Oidc: "oidc",
-    AwsIam: "aws-iam"
+    AwsIam: "aws-iam",
+    ServiceToken: "service-token"
 }

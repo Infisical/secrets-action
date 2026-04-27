@@ -200,6 +200,7 @@ export const getRawSecrets = async ({
 	envSlug,
 	infisicalToken,
 	projectSlug,
+	projectId,
 	secretPath,
 	shouldIncludeImports,
 	shouldRecurse,
@@ -208,12 +209,28 @@ export const getRawSecrets = async ({
 	envSlug: string;
 	infisicalToken: string;
 	projectSlug: string;
+	projectId: string;
 	secretPath: string;
 	shouldIncludeImports: boolean;
 	shouldRecurse: boolean;
 	axiosInstance: AxiosInstance;
 }) => {
 	try {
+		const params: Record<string, unknown> = {
+			secretPath,
+			environment: envSlug,
+			include_imports: shouldIncludeImports,
+			recursive: shouldRecurse,
+			expandSecretReferences: true
+		};
+
+		// Use workspaceId if project-id is provided, otherwise fall back to workspaceSlug
+		if (projectId) {
+			params.workspaceId = projectId;
+		} else {
+			params.workspaceSlug = projectSlug;
+		}
+
 		const response = await axiosInstance<{
 			secrets: {
 				secretKey: string;
@@ -231,14 +248,7 @@ export const getRawSecrets = async ({
 			headers: {
 				Authorization: `Bearer ${infisicalToken}`
 			},
-			params: {
-				secretPath,
-				environment: envSlug,
-				include_imports: shouldIncludeImports,
-				recursive: shouldRecurse,
-				workspaceSlug: projectSlug,
-				expandSecretReferences: true
-			}
+			params
 		});
 
 		const keyValueSecrets = Object.fromEntries(response.data.secrets.map(secret => [secret.secretKey, secret.secretValue]));
