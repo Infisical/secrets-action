@@ -1,5 +1,5 @@
 import core from "@actions/core";
-import { UALogin, getRawSecrets, oidcLogin, awsIamLogin, createAxiosInstance } from "./infisical";
+import { UALogin, getRawSecret, getRawSecrets, oidcLogin, awsIamLogin, createAxiosInstance } from "./infisical";
 import fs from "fs/promises";
 import { AuthMethod } from "./constants";
 
@@ -40,6 +40,7 @@ const main = async () => {
 		const envSlug = core.getInput("env-slug");
 		const projectSlug = core.getInput("project-slug");
 		const secretPath = core.getInput("secret-path");
+		const secretName = core.getInput("secret-name");
 		const exportType = core.getInput("export-type");
 		const fileOutputPath = core.getInput("file-output-path");
 		const shouldIncludeImports = core.getBooleanInput("include-imports");
@@ -88,16 +89,30 @@ const main = async () => {
 				throw new Error(`Invalid authentication method: ${method}`);
 		}
 
+		if (secretName && shouldRecurse) {
+			core.warning("The `recursive` input is ignored when `secret-name` is set");
+		}
+
 		// get secrets from Infisical using input params
-		const keyValueSecrets = await getRawSecrets({
-			axiosInstance,
-			envSlug,
-			infisicalToken,
-			projectSlug,
-			secretPath,
-			shouldIncludeImports,
-			shouldRecurse
-		});
+		const keyValueSecrets = secretName
+			? await getRawSecret({
+					axiosInstance,
+					envSlug,
+					infisicalToken,
+					projectSlug,
+					secretPath,
+					secretName,
+					shouldIncludeImports
+				})
+			: await getRawSecrets({
+					axiosInstance,
+					envSlug,
+					infisicalToken,
+					projectSlug,
+					secretPath,
+					shouldIncludeImports,
+					shouldRecurse
+				});
 
 		core.debug(`Exporting the following envs", ${JSON.stringify(Object.keys(keyValueSecrets))}`);
 

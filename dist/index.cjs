@@ -52958,6 +52958,35 @@ const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSl
         throw err;
     }
 });
+const getRawSecret = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlug, infisicalToken, projectSlug, secretPath, secretName, shouldIncludeImports, axiosInstance }) {
+    var _b;
+    try {
+        const response = yield axiosInstance({
+            method: "get",
+            url: `/api/v3/secrets/raw/${encodeURIComponent(secretName)}`,
+            headers: {
+                Authorization: `Bearer ${infisicalToken}`
+            },
+            params: {
+                secretPath,
+                environment: envSlug,
+                include_imports: shouldIncludeImports,
+                workspaceSlug: projectSlug,
+                expandSecretReferences: true
+            }
+        });
+        const secret = response.data.secret;
+        // return the same key/value shape as getRawSecrets so both paths export identically
+        return { [secret.secretKey]: secret.secretValue };
+    }
+    catch (err) {
+        if (err instanceof AxiosError && ((_b = err.response) === null || _b === void 0 ? void 0 : _b.status) === 404) {
+            throw new Error(`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectSlug}"`);
+        }
+        handleError(err);
+        throw err;
+    }
+});
 
 function parseHeadersInput(inputKey) {
     const rawHeadersString = core.getInput(inputKey) || "";
@@ -52990,6 +53019,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         const envSlug = core.getInput("env-slug");
         const projectSlug = core.getInput("project-slug");
         const secretPath = core.getInput("secret-path");
+        const secretName = core.getInput("secret-name");
         const exportType = core.getInput("export-type");
         const fileOutputPath = core.getInput("file-output-path");
         const shouldIncludeImports = core.getBooleanInput("include-imports");
@@ -53034,16 +53064,29 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
             default:
                 throw new Error(`Invalid authentication method: ${method}`);
         }
+        if (secretName && shouldRecurse) {
+            core.warning("The `recursive` input is ignored when `secret-name` is set");
+        }
         // get secrets from Infisical using input params
-        const keyValueSecrets = yield getRawSecrets({
-            axiosInstance,
-            envSlug,
-            infisicalToken,
-            projectSlug,
-            secretPath,
-            shouldIncludeImports,
-            shouldRecurse
-        });
+        const keyValueSecrets = secretName
+            ? yield getRawSecret({
+                axiosInstance,
+                envSlug,
+                infisicalToken,
+                projectSlug,
+                secretPath,
+                secretName,
+                shouldIncludeImports
+            })
+            : yield getRawSecrets({
+                axiosInstance,
+                envSlug,
+                infisicalToken,
+                projectSlug,
+                secretPath,
+                shouldIncludeImports,
+                shouldRecurse
+            });
         core.debug(`Exporting the following envs", ${JSON.stringify(Object.keys(keyValueSecrets))}`);
         // export fetched secrets
         if (exportType === "env") {

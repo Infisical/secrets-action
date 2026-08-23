@@ -262,3 +262,56 @@ export const getRawSecrets = async ({
 		throw err;
 	}
 };
+
+export const getRawSecret = async ({
+	envSlug,
+	infisicalToken,
+	projectSlug,
+	secretPath,
+	secretName,
+	shouldIncludeImports,
+	axiosInstance
+}: {
+	envSlug: string;
+	infisicalToken: string;
+	projectSlug: string;
+	secretPath: string;
+	secretName: string;
+	shouldIncludeImports: boolean;
+	axiosInstance: AxiosInstance;
+}) => {
+	try {
+		const response = await axiosInstance<{
+			secret: {
+				secretKey: string;
+				secretValue: string;
+			};
+		}>({
+			method: "get",
+			url: `/api/v3/secrets/raw/${encodeURIComponent(secretName)}`,
+			headers: {
+				Authorization: `Bearer ${infisicalToken}`
+			},
+			params: {
+				secretPath,
+				environment: envSlug,
+				include_imports: shouldIncludeImports,
+				workspaceSlug: projectSlug,
+				expandSecretReferences: true
+			}
+		});
+
+		const secret = response.data.secret;
+
+		// return the same key/value shape as getRawSecrets so both paths export identically
+		return { [secret.secretKey]: secret.secretValue };
+	} catch (err) {
+		if (err instanceof AxiosError && err.response?.status === 404) {
+			throw new Error(
+				`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectSlug}"`
+			);
+		}
+		handleError(err);
+		throw err;
+	}
+};

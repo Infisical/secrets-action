@@ -86,6 +86,24 @@ steps:
     uses: actions/checkout@v4
 ```
 
+### A single secret
+
+Set `secret-name` to fetch only one secret instead of every secret in `secret-path`. The secret is exported the same way as above, so it is available as an environment variable (or in the exported file) under its own name.
+
+```yaml
+- uses: Infisical/secrets-action@v1.0.9
+  with:
+    method: "oidc"
+    identity-id: "24be0d94-b43a-41c4-812c-1e8654d9ce1e"
+    domain: "https://app.infisical.com" # Update to the instance URL when using EU (https://eu.infisical.com), a dedicated instance, or a self-hosted instance
+    env-slug: "dev"
+    project-slug: "cli-integration-tests-9-edj"
+    secret-path: "/my-secret-path"
+    secret-name: "DATABASE_URL"
+```
+
+The action fails with an error if the secret does not exist at the given path.
+
 ## Inputs
 
 ### `method`
@@ -131,6 +149,10 @@ steps:
 ### `secret-path`
 
 **Optional**. Source secret path. Defaults to `/`.  Example: `/my-secret-path`.
+
+### `secret-name`
+
+**Optional**. The name of a single secret to fetch from `secret-path`. When omitted, every secret in `secret-path` is fetched. When set, `recursive` is ignored.
 
 ### `include-imports`
 
