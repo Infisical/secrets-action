@@ -43,6 +43,9 @@ inputs:
     description: "Source path, example: `/my-secret-path`"
     required: false
     default: "/"
+  secret-name:
+    description: "If set, only the secret with this name will be fetched from `secret-path`, instead of every secret in the path"
+    required: false
   include-imports:
     description: "If set to `true`, it will include imported secrets"
     required: false
