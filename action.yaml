@@ -21,9 +21,12 @@ inputs:
   oidc-audience:
     description: "Custom aud claim for the signed Github ID token"
     required: false
+  project-id:
+    description: "Source project ID. Exactly one of `project-id` or `project-slug` must be set"
+    required: false
   project-slug:
-    description: "Source project slug"
-    required: true
+    description: "Source project slug. Exactly one of `project-id` or `project-slug` must be set"
+    required: false
   env-slug:
     description: "Source environment slug"
     required: true

@@ -199,6 +199,7 @@ const getAwsRegion = async () => {
 export const getRawSecrets = async ({
 	envSlug,
 	infisicalToken,
+	projectId,
 	projectSlug,
 	secretPath,
 	shouldIncludeImports,
@@ -207,6 +208,7 @@ export const getRawSecrets = async ({
 }: {
 	envSlug: string;
 	infisicalToken: string;
+	projectId: string;
 	projectSlug: string;
 	secretPath: string;
 	shouldIncludeImports: boolean;
@@ -236,7 +238,7 @@ export const getRawSecrets = async ({
 				environment: envSlug,
 				include_imports: shouldIncludeImports,
 				recursive: shouldRecurse,
-				workspaceSlug: projectSlug,
+				...(projectId ? { workspaceId: projectId } : { workspaceSlug: projectSlug }),
 				expandSecretReferences: true
 			}
 		});
@@ -266,6 +268,7 @@ export const getRawSecrets = async ({
 export const getRawSecret = async ({
 	envSlug,
 	infisicalToken,
+	projectId,
 	projectSlug,
 	secretPath,
 	secretName,
@@ -274,6 +277,7 @@ export const getRawSecret = async ({
 }: {
 	envSlug: string;
 	infisicalToken: string;
+	projectId: string;
 	projectSlug: string;
 	secretPath: string;
 	secretName: string;
@@ -296,7 +300,7 @@ export const getRawSecret = async ({
 				secretPath,
 				environment: envSlug,
 				include_imports: shouldIncludeImports,
-				workspaceSlug: projectSlug,
+				...(projectId ? { workspaceId: projectId } : { workspaceSlug: projectSlug }),
 				expandSecretReferences: true
 			}
 		});
@@ -308,7 +312,7 @@ export const getRawSecret = async ({
 	} catch (err) {
 		if (err instanceof AxiosError && err.response?.status === 404) {
 			throw new Error(
-				`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectSlug}"`
+				`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectId || projectSlug}"`
 			);
 		}
 		handleError(err);
