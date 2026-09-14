@@ -52921,7 +52921,7 @@ const getAwsRegion = () => __awaiter(void 0, void 0, void 0, function* () {
         throw err;
     }
 });
-const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlug, infisicalToken, projectSlug, secretPath, shouldIncludeImports, shouldRecurse, axiosInstance }) {
+const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlug, infisicalToken, projectId, projectSlug, secretPath, shouldIncludeImports, shouldRecurse, axiosInstance }) {
     try {
         const response = yield axiosInstance({
             method: "get",
@@ -52929,14 +52929,7 @@ const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSl
             headers: {
                 Authorization: `Bearer ${infisicalToken}`
             },
-            params: {
-                secretPath,
-                environment: envSlug,
-                include_imports: shouldIncludeImports,
-                recursive: shouldRecurse,
-                workspaceSlug: projectSlug,
-                expandSecretReferences: true
-            }
+            params: Object.assign(Object.assign({ secretPath, environment: envSlug, include_imports: shouldIncludeImports, recursive: shouldRecurse }, (projectId ? { workspaceId: projectId } : { workspaceSlug: projectSlug })), { expandSecretReferences: true })
         });
         const keyValueSecrets = Object.fromEntries(response.data.secrets.map(secret => [secret.secretKey, secret.secretValue]));
         // process imported secrets
@@ -52958,7 +52951,7 @@ const getRawSecrets = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSl
         throw err;
     }
 });
-const getRawSecret = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlug, infisicalToken, projectSlug, secretPath, secretName, shouldIncludeImports, axiosInstance }) {
+const getRawSecret = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlug, infisicalToken, projectId, projectSlug, secretPath, secretName, shouldIncludeImports, axiosInstance }) {
     var _b;
     try {
         const response = yield axiosInstance({
@@ -52967,13 +52960,7 @@ const getRawSecret = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlu
             headers: {
                 Authorization: `Bearer ${infisicalToken}`
             },
-            params: {
-                secretPath,
-                environment: envSlug,
-                include_imports: shouldIncludeImports,
-                workspaceSlug: projectSlug,
-                expandSecretReferences: true
-            }
+            params: Object.assign(Object.assign({ secretPath, environment: envSlug, include_imports: shouldIncludeImports }, (projectId ? { workspaceId: projectId } : { workspaceSlug: projectSlug })), { expandSecretReferences: true })
         });
         const secret = response.data.secret;
         // return the same key/value shape as getRawSecrets so both paths export identically
@@ -52981,7 +52968,7 @@ const getRawSecret = (_a) => __awaiter(void 0, [_a], void 0, function* ({ envSlu
     }
     catch (err) {
         if (err instanceof AxiosError && ((_b = err.response) === null || _b === void 0 ? void 0 : _b.status) === 404) {
-            throw new Error(`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectSlug}"`);
+            throw new Error(`Secret "${secretName}" was not found at path "${secretPath}" in environment "${envSlug}" of project "${projectId || projectSlug}"`);
         }
         handleError(err);
         throw err;
@@ -53018,6 +53005,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         const domain = core.getInput("domain");
         const envSlug = core.getInput("env-slug");
         const projectSlug = core.getInput("project-slug");
+        const projectId = core.getInput("project-id");
         const secretPath = core.getInput("secret-path");
         const secretName = core.getInput("secret-name");
         const exportType = core.getInput("export-type");
@@ -53025,6 +53013,12 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
         const shouldIncludeImports = core.getBooleanInput("include-imports");
         const shouldRecurse = core.getBooleanInput("recursive");
         const extraHeaders = parseHeadersInput("extra-headers");
+        if (!projectId && !projectSlug) {
+            throw new Error("Either `project-id` or `project-slug` must be set");
+        }
+        if (projectId && projectSlug) {
+            throw new Error("Only one of `project-id` or `project-slug` can be set, not both");
+        }
         // get infisical token using credentials
         let infisicalToken;
         const axiosInstance = createAxiosInstance(domain, extraHeaders);
@@ -53073,6 +53067,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
                 axiosInstance,
                 envSlug,
                 infisicalToken,
+                projectId,
                 projectSlug,
                 secretPath,
                 secretName,
@@ -53082,6 +53077,7 @@ const main = () => __awaiter(void 0, void 0, void 0, function* () {
                 axiosInstance,
                 envSlug,
                 infisicalToken,
+                projectId,
                 projectSlug,
                 secretPath,
                 shouldIncludeImports,

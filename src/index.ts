@@ -39,6 +39,7 @@ const main = async () => {
 		const domain = core.getInput("domain");
 		const envSlug = core.getInput("env-slug");
 		const projectSlug = core.getInput("project-slug");
+		const projectId = core.getInput("project-id");
 		const secretPath = core.getInput("secret-path");
 		const secretName = core.getInput("secret-name");
 		const exportType = core.getInput("export-type");
@@ -46,6 +47,13 @@ const main = async () => {
 		const shouldIncludeImports = core.getBooleanInput("include-imports");
 		const shouldRecurse = core.getBooleanInput("recursive");
 		const extraHeaders = parseHeadersInput("extra-headers");
+
+		if (!projectId && !projectSlug) {
+			throw new Error("Either `project-id` or `project-slug` must be set");
+		}
+		if (projectId && projectSlug) {
+			throw new Error("Only one of `project-id` or `project-slug` can be set, not both");
+		}
 
 		// get infisical token using credentials
 		let infisicalToken;
@@ -99,6 +107,7 @@ const main = async () => {
 					axiosInstance,
 					envSlug,
 					infisicalToken,
+					projectId,
 					projectSlug,
 					secretPath,
 					secretName,
@@ -108,6 +117,7 @@ const main = async () => {
 					axiosInstance,
 					envSlug,
 					infisicalToken,
+					projectId,
 					projectSlug,
 					secretPath,
 					shouldIncludeImports,

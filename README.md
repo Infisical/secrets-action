@@ -126,9 +126,13 @@ The action fails with an error if the secret does not exist at the given path.
 
 **Optional**. Custom aud claim for the signed Github ID token
 
+### `project-id`
+
+**Optional**. Source project ID. Exactly one of `project-id` or `project-slug` must be set
+
 ### `project-slug`
 
-**Required**. Source project slug
+**Optional**. Source project slug. Exactly one of `project-id` or `project-slug` must be set
 
 ### `env-slug`
 
