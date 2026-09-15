@@ -7,17 +7,35 @@ import { HttpRequest } from "@aws-sdk/protocol-http";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants";
 
+// Infisical's own error envelope isn't always { message: string }: a Zod validation failure
+// (e.g. a malformed secretPath or UUID) responds with { message: ZodIssue[] }.
+const extractApiMessage = (data: unknown): string | undefined => {
+	if (!data || typeof data !== "object") {
+		return undefined;
+	}
+
+	const message = (data as { message?: unknown }).message;
+	if (typeof message === "string") {
+		return message;
+	}
+	if (Array.isArray(message)) {
+		return message.map(item => (typeof item === "string" ? item : (item as { message?: string })?.message ?? JSON.stringify(item))).join(", ");
+	}
+
+	return undefined;
+};
+
 const handleError = (err: unknown) => {
 	if (err instanceof AxiosError) {
-		const apiMessage = err.response?.data?.message;
 		if (typeof err?.response?.data === "object") {
 			core.error(JSON.stringify(err?.response?.data, null, 4));
 		}
-		// AxiosError's own message is a generic "Request failed with status code N",
-		// which hides the actual reason. Replace it so core.setFailed shows the API's message.
+		const apiMessage = extractApiMessage(err.response?.data);
+		// AxiosError's own message is a generic "Request failed with status code N", which hides
+		// the actual reason. Prepend the API's message so core.setFailed shows both. core.error isn't
+		// called here for apiMessage: core.setFailed already logs the final err.message via core.error.
 		if (apiMessage) {
-			core.error(apiMessage);
-			err.message = apiMessage;
+			err.message = `${err.message}: ${apiMessage}`;
 		}
 	} else {
 		core.error((err as Error)?.message);
