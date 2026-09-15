@@ -7,15 +7,55 @@ import { HttpRequest } from "@aws-sdk/protocol-http";
 import { SignatureV4 } from "@aws-sdk/signature-v4";
 import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants";
 
+// Infisical's own error envelope isn't always { message: string }: a Zod validation failure
+// (e.g. a malformed secretPath or UUID) responds with { message: ZodIssue[] }.
+const extractApiMessage = (data: unknown): string | undefined => {
+	if (!data || typeof data !== "object") {
+		return undefined;
+	}
+
+	const message = (data as { message?: unknown }).message;
+	if (typeof message === "string") {
+		return message;
+	}
+	if (Array.isArray(message)) {
+		const formatted = message
+			.map(item => {
+				if (typeof item === "string") {
+					return item;
+				}
+				if (item && typeof item === "object") {
+					const issue = item as { path?: unknown[]; message?: unknown };
+					if (typeof issue.message === "string") {
+						const path = Array.isArray(issue.path) && issue.path.length > 0 ? `${issue.path.join(".")}: ` : "";
+						return `${path}${issue.message}`;
+					}
+				}
+				return JSON.stringify(item);
+			})
+			.join(", ");
+		return formatted || undefined;
+	}
+
+	return undefined;
+};
+
 const handleError = (err: unknown) => {
 	if (err instanceof AxiosError) {
-		core.error(err.response?.data?.message);
-		if (typeof err?.response?.data === "object") {
-			core.error(JSON.stringify(err?.response?.data, null, 4));
+		if (err.response?.data && typeof err.response.data === "object") {
+			// core.info, not core.error: core.setFailed logs the final err.message via core.error already,
+			// so this is context for the log, not a second failure annotation.
+			core.info(JSON.stringify(err.response.data, null, 4));
 		}
-	} else {
-		core.error((err as Error)?.message);
+		const apiMessage = extractApiMessage(err.response?.data);
+		// AxiosError's own message is a generic "Request failed with status code N", which hides
+		// the actual reason. Append the API's message so core.setFailed shows both.
+		if (apiMessage) {
+			err.message = `${err.message}: ${apiMessage}`;
+		}
 	}
+	// Non-Axios errors and the Axios branch above both fall through to the caller's `throw err`,
+	// caught by main()'s core.setFailed(err.message), which already emits a core.error annotation.
 };
 
 export const createAxiosInstance = (domain: string, defaultHeaders: Record<string, string>) => {
