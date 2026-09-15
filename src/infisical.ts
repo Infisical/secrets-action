@@ -9,9 +9,15 @@ import { AWS_IDENTITY_DOCUMENT_URI, AWS_TOKEN_METADATA_URI } from "./constants";
 
 const handleError = (err: unknown) => {
 	if (err instanceof AxiosError) {
-		core.error(err.response?.data?.message);
+		const apiMessage = err.response?.data?.message;
 		if (typeof err?.response?.data === "object") {
 			core.error(JSON.stringify(err?.response?.data, null, 4));
+		}
+		// AxiosError's own message is a generic "Request failed with status code N",
+		// which hides the actual reason. Replace it so core.setFailed shows the API's message.
+		if (apiMessage) {
+			core.error(apiMessage);
+			err.message = apiMessage;
 		}
 	} else {
 		core.error((err as Error)?.message);
