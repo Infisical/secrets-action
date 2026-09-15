@@ -61,6 +61,11 @@ inputs:
     description: "Extra headers to add to all requests sent to Infisical"
     required: false
     default: ""
+  clean:
+    description: "If set to `true`, the exported .env file will be deleted after processing (clean up). Defaults to `true`"
+    required: false
+    default: "true"
 runs:
   using: "node24"
   main: "dist/index.cjs"
+  post: "dist/post.cjs"
