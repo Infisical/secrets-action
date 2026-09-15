@@ -19,7 +19,22 @@ const extractApiMessage = (data: unknown): string | undefined => {
 		return message;
 	}
 	if (Array.isArray(message)) {
-		return message.map(item => (typeof item === "string" ? item : (item as { message?: string })?.message ?? JSON.stringify(item))).join(", ");
+		const formatted = message
+			.map(item => {
+				if (typeof item === "string") {
+					return item;
+				}
+				if (item && typeof item === "object") {
+					const issue = item as { path?: unknown[]; message?: unknown };
+					if (typeof issue.message === "string") {
+						const path = Array.isArray(issue.path) && issue.path.length > 0 ? `${issue.path.join(".")}: ` : "";
+						return `${path}${issue.message}`;
+					}
+				}
+				return JSON.stringify(item);
+			})
+			.join(", ");
+		return formatted || undefined;
 	}
 
 	return undefined;
@@ -27,19 +42,20 @@ const extractApiMessage = (data: unknown): string | undefined => {
 
 const handleError = (err: unknown) => {
 	if (err instanceof AxiosError) {
-		if (typeof err?.response?.data === "object") {
-			core.error(JSON.stringify(err?.response?.data, null, 4));
+		if (err.response?.data && typeof err.response.data === "object") {
+			// core.info, not core.error: core.setFailed logs the final err.message via core.error already,
+			// so this is context for the log, not a second failure annotation.
+			core.info(JSON.stringify(err.response.data, null, 4));
 		}
 		const apiMessage = extractApiMessage(err.response?.data);
 		// AxiosError's own message is a generic "Request failed with status code N", which hides
-		// the actual reason. Prepend the API's message so core.setFailed shows both. core.error isn't
-		// called here for apiMessage: core.setFailed already logs the final err.message via core.error.
+		// the actual reason. Append the API's message so core.setFailed shows both.
 		if (apiMessage) {
 			err.message = `${err.message}: ${apiMessage}`;
 		}
-	} else {
-		core.error((err as Error)?.message);
 	}
+	// Non-Axios errors and the Axios branch above both fall through to the caller's `throw err`,
+	// caught by main()'s core.setFailed(err.message), which already emits a core.error annotation.
 };
 
 export const createAxiosInstance = (domain: string, defaultHeaders: Record<string, string>) => {
