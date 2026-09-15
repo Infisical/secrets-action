@@ -61,6 +61,14 @@ inputs:
     description: "Extra headers to add to all requests sent to Infisical"
     required: false
     default: ""
+  env-prefix:
+    description: "Prefix to add to all exported environment variable names (e.g., 'TF_VAR_')"
+    required: false
+    default: ""
+  env-suffix:
+    description: "Suffix to add to all exported environment variable names"
+    required: false
+    default: ""
 runs:
   using: "node24"
   main: "dist/index.cjs"
